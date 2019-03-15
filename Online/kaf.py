@@ -29,7 +29,9 @@ input=read_data("../Data/raw_params.txt")
 output=read_data("../Data/output.txt")
 
 #model=models.QKMCC(input[0], output[0], 0.1, 0.2, 2.25)
-model=models.KMCC(input[0], output[0], 0.2, 2.25)
+#model=models.QKLMS(input[0], output[0], 0.1, 0.2, 2.25)
+#model=models.KMCC(input[0], output[0], 0.2, 2.25)
+model=models.KLMS(input[0], output[0], 0.2, 2.25)
 p=np.zeros(output.size)
 
 for i in range(output.size-1):
