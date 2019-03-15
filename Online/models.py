@@ -22,15 +22,16 @@ class Kernel():
 class KAF(Kernel):
     def __init__(
         self,
-        num_features,
+        input,
+        output,
         learning_step=0.5,
         sigma=1
     ):
         self.learning_step=learning_step
         self.sigma=sigma
-        self.inputs=[np.zeros(num_features)]
-        self.weights=[0]
-        self.pred=[]
+        self.inputs=[input]
+        self.weights=[float(learning_step * output)]
+        self.pred=[0]
 
     def predict(self, new_input):
         kernel_res=self.kernel(self.inputs, new_input, self.sigma, 1)
@@ -43,11 +44,12 @@ class KAF(Kernel):
 class KLMS(KAF):
     def __init__(
         self,
-        num_features,
+        input,
+        output,
         learning_step=0.5,
         sigma=1
     ):
-        super().__init__(num_features, learning_step, sigma)
+        super().__init__(input, output, learning_step, sigma)
 
     def update(self, new_input, expected):
         prediction=self.predict(new_input)
@@ -63,12 +65,13 @@ class KLMS(KAF):
 class QKLMS(KAF):
     def __init__(
         self,
-        num_features,
+        input,
+        output,
         epsilon,
         learning_step=0.5,
         sigma=1
     ):
-        super().__init__(num_features, learning_step, sigma)
+        super().__init__(input, output, learning_step, sigma)
         self.epsilon = epsilon
 
     def calc_dist(self, new_input):
@@ -76,7 +79,6 @@ class QKLMS(KAF):
         dist = np.einsum("ij,ij->i", diff, diff)
         min_pos=np.argmin(dist)
         return min_pos, dist[min_pos]
-
 
     def predict(self, new_input):
         kernel_res=self.kernel(self.inputs, new_input, self.sigma, 1)
@@ -100,11 +102,12 @@ class QKLMS(KAF):
 class KMCC(KAF):
     def __init__(
         self,
-        num_features,
+        input,
+        output,
         learning_step=0.5,
         sigma=1
     ):
-        super().__init__(num_features,learning_step, sigma)
+        super().__init__(input, output, learning_step, sigma)
 
     def update(self, new_input, expected):
         prediction = self.predict(new_input)
@@ -121,12 +124,13 @@ class KMCC(KAF):
 class QKMCC(KAF):
     def __init__(
         self,
-        num_features,
+        input,
+        output,
         epsilon,
         learning_step=0.5,
         sigma=1
     ):
-        super().__init__(num_features, learning_step, sigma)
+        super().__init__(input, output, learning_step, sigma)
         self.epsilon = epsilon
 
     def calc_dist(self, new_input):
@@ -134,7 +138,6 @@ class QKMCC(KAF):
         dist = np.einsum("ij,ij->i", diff, diff)
         min_pos=np.argmin(dist)
         return min_pos, dist[min_pos]
-
 
     def predict(self, new_input):
         kernel_res=self.kernel(self.inputs, new_input, self.sigma, 1)

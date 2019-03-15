@@ -28,11 +28,12 @@ def plot(output, p, err):
 input=read_data("../Data/raw_params.txt")
 output=read_data("../Data/output.txt")
 
-model=models.QKLMS(input.shape[1], 0.1, 0.2, 2.25)
+#model=models.QKMCC(input[0], output[0], 0.1, 0.2, 2.25)
+model=models.KMCC(input[0], output[0], 0.2, 2.25)
 p=np.zeros(output.size)
 
-for i in range(output.size):
-    model.update(input[i], output[i])
+for i in range(output.size-1):
+    model.update(input[i+1], output[i+1])
 
 p=model.pred
 output=output.reshape((-1,))
