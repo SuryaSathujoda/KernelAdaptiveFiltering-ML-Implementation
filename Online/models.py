@@ -1,10 +1,6 @@
 import numpy as np
 import numexpr as ne
-import matplotlib.pyplot as plt
 
-from scipy.signal import savgol_filter
-from scipy.linalg.blas import sgemm
-from sklearn.metrics import mean_squared_error
 from abc import ABC, abstractmethod
 
 class Kernel():
@@ -40,9 +36,11 @@ class Quantization():
         min_pos, min_dist = self.calc_dist(new_input)
         if(min_dist < self.epsilon):
             self.weights[min_pos] += float(new_weight)
+            self.merge = 1
         else:
             self.inputs.append(new_input)
             self.weights.append(float(new_weight))
+            self.merge = 0
 
     def Non_Quantized(self, new_weight, new_input):
         self.weights.append(float(new_weight))
@@ -53,8 +51,8 @@ class KAF(Kernel, Error_Func, Quantization):
         self,
         input,
         output,
-        learning_step=0.5,
-        sigma=1
+        learning_step = 0.5,
+        sigma = 1
     ):
         self.learning_step = learning_step
         self.sigma = sigma
@@ -139,6 +137,7 @@ class QKMCC(KAF):
     ):
         super().__init__(input, output, learning_step, sigma)
         self.epsilon = epsilon
+        self.merge = 0
 
     def update(self, new_input, expected):
         prediction = self.predict(new_input)
