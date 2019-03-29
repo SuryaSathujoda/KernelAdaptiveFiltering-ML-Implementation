@@ -61,7 +61,8 @@ class KAF(Kernel, Error_Func, Quantization):
         self.pred = [0]
 
     def predict(self, new_input):
-        kernel_res = self.kernel(self.inputs, new_input, self.sigma, 1)
+        gamma = 1/(2*self.sigma**2)
+        kernel_res = self.kernel(self.inputs, new_input, gamma, 1)
         prediction = np.einsum("i,i->", self.weights, kernel_res)
         self.pred.append(prediction)
         return prediction
